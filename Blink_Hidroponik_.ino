@@ -5,6 +5,10 @@
 // #include <SimpleTimer.h>
 #include <DHT.h>
 
+//Lux Sensor
+#include <Wire.h>
+#include <BH1750.h>
+
 // You should get Auth Token in the Blynk App.
 // Go to the Project Settings (nut icon).
 char auth[] = "iBPq8xOwOiK6dQ6yABHysMevuVnVMx_N"; //Enter the Auth code which was send by Blink
@@ -23,6 +27,10 @@ char pass[] = "tahundepanjadibos2";  //Enter your WIFI Password
 
 DHT dht(DHTPIN, DHTTYPE);
 BlynkTimer timer;
+
+//Lux Sensor
+BH1750 lightMeter;
+
 // This function sends Arduino's up time every second to Virtual Pin (5).
 // In the app, Widget's reading frequency should be set to PUSH. This means
 // that you define how often to send data to Blynk App.
@@ -48,6 +56,11 @@ void setup()
 
   dht.begin();
 
+  //Lux Sensor
+  Wire.begin();
+  lightMeter.begin();
+  
+
   // Setup a function to be called every second
   timer.setInterval(1000L, sendSensor);
 }
@@ -63,4 +76,12 @@ void loop()
 
   Blynk.run(); // Initiates Blynk
   timer.run(); // Initiates SimpleTimer
+
+  //lux Sensor
+  float lux = lightMeter.readLightLevel();
+  Serial.print("Light Meter: ");
+  Serial.print(lux);
+  Serial.println(" lx");
+  Blynk.virtualWrite(V2, lux);
+  delay(1000);
 }
